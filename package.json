@@ -1,16 +1,16 @@
 {
-  "name": "nodebb-plugin-reputation-rules",
+  "name": "nodebb-plugin-score-rules",
   "version": "0.0.1",
   "description": "A starter kit for quickly creating NodeBB plugins",
   "main": "library.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/claude-wishnote/nodebb-plugin-reputation-rules.git"
+    "url": "git+https://github.com/claude-wishnote/nodebb-plugin-score-rules.git"
   },
   "keywords": [
     "nodebb",
     "plugin",
-    "reputation-rules",
+    "score-rules",
     "shell"
   ],
   "husky": {
@@ -27,7 +27,7 @@
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/claude-wishnote/nodebb-plugin-reputation-rules/issues"
+    "url": "https://github.com/claude-wishnote/nodebb-plugin-score-rules/issues"
   },
   "nbbpm": {
     "compatibility": "^3.2.0"
@@ -41,7 +41,7 @@
     "husky": "9.0.11",
     "lint-staged": "15.2.7"
   },
-  "homepage": "https://github.com/claude-wishnote/nodebb-plugin-reputation-rules#readme",
+  "homepage": "https://github.com/claude-wishnote/nodebb-plugin-score-rules#readme",
   "directories": {
     "lib": "lib",
     "test": "test"

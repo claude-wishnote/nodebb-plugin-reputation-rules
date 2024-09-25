@@ -1,6 +1,6 @@
 {
-	"id": "nodebb-plugin-reputation-rules",
-	"url": "https://github.com/claude-wishnote/nodebb-plugin-reputation-rules",
+	"id": "nodebb-plugin-score-rules",
+	"url": "https://github.com/claude-wishnote/nodebb-plugin-score-rules",
 	"library": "./library.js",
 	"hooks": [
 		{ "hook": "static:app.load", "method": "init" },
@@ -14,7 +14,7 @@
 		"static": "./static"
 	},
 	"scss": [
-		"static/scss/reputation-rules.scss"
+		"static/scss/score-rules.scss"
 	],
 	"scripts": [
 		"static/lib/main.js"
@@ -23,8 +23,8 @@
 		"static/lib/acp-main.js"
 	],
 	"modules": {
-		"../client/reputation-rules.js": "./static/lib/reputation-rules.js",
-		"../admin/plugins/reputation-rules.js": "./static/lib/admin.js"
+		"../client/score-rules.js": "./static/lib/score-rules.js",
+		"../admin/plugins/score-rules.js": "./static/lib/admin.js"
 	},
 	"templates": "static/templates"
 }

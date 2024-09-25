@@ -15,22 +15,22 @@ const plugin = {};
 plugin.init = async (params) => {
     const { router /* , middleware , controllers */ } = params;
      let topicPostScore = 5;
-    await meta.settings.setOne('reputation-rules', 'topicPostScore', topicPostScore)
+    await meta.settings.setOne('score-rules', 'topicPostScore', topicPostScore)
     //回复得分3
     let commentPostScore = 3;
-    await meta.settings.setOne('reputation-rules', 'commentPostScore', commentPostScore)
+    await meta.settings.setOne('score-rules', 'commentPostScore', commentPostScore)
      //他人点赞得分1
     let upvotedScore = 1;
-    await meta.settings.setOne('reputation-rules', 'upvotedScore', upvotedScore)
-    routeHelpers.setupPageRoute(router, '/reputation-rules', [(req, res, next) => {
-        winston.info(`[plugins/reputation-rules] In middleware. This argument can be either a single middleware or an array of middlewares`);
+    await meta.settings.setOne('score-rules', 'upvotedScore', upvotedScore)
+    routeHelpers.setupPageRoute(router, '/score-rules', [(req, res, next) => {
+        winston.info(`[plugins/score-rules] In middleware. This argument can be either a single middleware or an array of middlewares`);
         setImmediate(next);
     }], (req, res) => {
-        winston.info(`[plugins/reputation-rules] Navigated to ${nconf.get('relative_path')}/reputation-rules`);
-        res.render('reputation-rules', { uid: req.uid });
+        winston.info(`[plugins/score-rules] Navigated to ${nconf.get('relative_path')}/score-rules`);
+        res.render('score-rules', { uid: req.uid });
     });
 
-    routeHelpers.setupAdminPageRoute(router, '/admin/plugins/reputation-rules', controllers.renderAdminPage);
+    routeHelpers.setupAdminPageRoute(router, '/admin/plugins/score-rules', controllers.renderAdminPage);
 };
 
 plugin.addRoutes = async ({ router, middleware, helpers }) => {
@@ -39,7 +39,7 @@ plugin.addRoutes = async ({ router, middleware, helpers }) => {
         // middleware.admin.checkPrivileges,	// use this to restrict the route to administrators
     ];
 
-    routeHelpers.setupApiRoute(router, 'get', '/reputation-rules/:param1', middlewares, (req, res) => {
+    routeHelpers.setupApiRoute(router, 'get', '/score-rules/:param1', middlewares, (req, res) => {
         helpers.formatApiResponse(200, res, {
             foobar: req.params.param1,
         });
@@ -48,9 +48,9 @@ plugin.addRoutes = async ({ router, middleware, helpers }) => {
 
 plugin.addAdminNavigation = (header) => {
     header.plugins.push({
-        route: '/plugins/reputation-rules',
+        route: '/plugins/score-rules',
         icon: 'fa-tint',
-        name: 'reputation-rules',
+        name: 'score-rules',
     });
 
     return header;
@@ -70,7 +70,7 @@ const actions = {
  */
 plugin.upvotePost = async (data) => {
     console.log("用户:", data.uid, "点赞帖子:", data.pid);
-    const { upvotedScore } = await meta.settings.get('reputation-rules');
+    const { upvotedScore } = await meta.settings.get('score-rules');
     await addScoreRecord(data.uid, upvotedScore, actions.upvotePost, { pid: data.pid });
 };
 
@@ -80,7 +80,7 @@ plugin.upvotePost = async (data) => {
  */
 plugin.unvodePost = async (data) => {
     console.log("用户:", data.uid, "取消点赞帖子:", data.pid);
-    const { upvotedScore } = await meta.settings.get('reputation-rules');
+    const { upvotedScore } = await meta.settings.get('score-rules');
     await deductScore(data.uid, upvotedScore, actions.unvotePost, { pid: data.pid });
 };
 
@@ -91,7 +91,7 @@ plugin.unvodePost = async (data) => {
  */
 plugin.createPost = async (data) => {
     console.log("用户:", data.data.uid, "创建帖子:", data.data.pid);
-    const { topicPostScore, commentPostScore } = await meta.settings.get('reputation-rules');
+    const { topicPostScore, commentPostScore } = await meta.settings.get('score-rules');
     if(data.data.isMain) {
         // 创建主题帖
         await addScoreRecord(data.data.uid, topicPostScore, actions.createTopicPost, {

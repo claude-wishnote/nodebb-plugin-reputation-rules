@@ -9,7 +9,7 @@
  *
  * {
  *     "test_plugins": [
- *         "nodebb-plugin-reputation-rules"
+ *         "nodebb-plugin-score-rules"
  *     ]
  * }
  */
@@ -22,7 +22,7 @@ const assert = require('assert');
 
 const db = require.main.require('./test/mocks/databasemock');
 
-describe('nodebb-plugin-reputation-rules', () => {
+describe('nodebb-plugin-score-rules', () => {
 	before(() => {
 		// Prepare for tests here
 	});

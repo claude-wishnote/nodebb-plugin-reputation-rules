@@ -3,10 +3,10 @@
 
 	<div class="row m-0">
 		<div id="spy-container" class="col-12 col-md-8 px-0 mb-4" tabindex="0">
-			<form role="form" class="reputation-rules-settings">
+			<form role="form" class="score-rules-settings">
 				<div class="mb-4">
 					<h5 class="fw-bold tracking-tight settings-header">	
-					  Reputation Score Settings
+					    Score Settings
 					</h5>
 					<div class="mb-3">
 						<div>

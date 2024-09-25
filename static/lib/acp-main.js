@@ -22,7 +22,7 @@ $(document).ready(function () {
 $(document).ready(); 当 DOM 准备就绪时触发
 $(window).on('action:ajaxify.end', function(data) { ... }); “data”包含“url”
 */
-	console.log('nodebb-plugin-reputation-rules: acp-loaded');
+	console.log('nodebb-plugin-score-rules: acp-loaded');
 	// Note how this is shown in the console on the first load of every page in the ACP
 	// 请注意，在 ACP 中每个页面首次加载时，控制台中是如何显示的
 });
