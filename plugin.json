@@ -1,0 +1,30 @@
+{
+	"id": "nodebb-plugin-reputation-rules",
+	"url": "https://github.com/claude-wishnote/nodebb-plugin-reputation-rules",
+	"library": "./library.js",
+	"hooks": [
+		{ "hook": "static:app.load", "method": "init" },
+		{ "hook": "static:api.routes", "method": "addRoutes" },
+		{ "hook": "filter:admin.header.build", "method": "addAdminNavigation" },
+		{ "hook": "action:post.upvote", "method": "upvotePost" },
+		{ "hook": "action:post.unvote", "method":"unvodePost" },
+		{ "hook": "filter:post.create", "method": "createPost" }
+ 	],
+	"staticDirs": {
+		"static": "./static"
+	},
+	"scss": [
+		"static/scss/reputation-rules.scss"
+	],
+	"scripts": [
+		"static/lib/main.js"
+	],
+	"acpScripts": [
+		"static/lib/acp-main.js"
+	],
+	"modules": {
+		"../client/reputation-rules.js": "./static/lib/reputation-rules.js",
+		"../admin/plugins/reputation-rules.js": "./static/lib/admin.js"
+	},
+	"templates": "static/templates"
+}
