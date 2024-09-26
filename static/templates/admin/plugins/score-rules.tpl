@@ -1,4 +1,4 @@
-<div class="acp-page-container">
+<div>
 	<!-- IMPORT admin/partials/settings/header.tpl -->
 
 	<div class="row m-0">

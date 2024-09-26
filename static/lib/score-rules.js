@@ -7,9 +7,9 @@
 */
 
 define('forum/score-rules', function () {
-	var module = {};
-	module.init = function () {
-		$('#last-p').text('score-rules.js loaded!');
-	};
-	return module;
+	// var module = {};
+	// module.init = function () {
+	// 	$('#last-p').text('score-rules.js loaded!');
+	// };
+	// return module;
 });

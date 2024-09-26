@@ -25,10 +25,7 @@ plugin.init = async (params) => {
     routeHelpers.setupPageRoute(router, '/score-rules', [(req, res, next) => {
         winston.info(`[plugins/score-rules] In middleware. This argument can be either a single middleware or an array of middlewares`);
         setImmediate(next);
-    }], (req, res) => {
-        winston.info(`[plugins/score-rules] Navigated to ${nconf.get('relative_path')}/score-rules`);
-        res.render('score-rules', { uid: req.uid });
-    });
+    }], controllers.renderScoreRulesPage);
 
     routeHelpers.setupAdminPageRoute(router, '/admin/plugins/score-rules', controllers.renderAdminPage);
 };
