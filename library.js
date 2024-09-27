@@ -6,7 +6,7 @@ const winston = require.main.require('winston');
 const meta = require.main.require('./src/meta');
 
 const controllers = require('./lib/controllers');
-const { addScoreRecord, deductScore} = require('./lib/score');
+const { addScoreRecord, deductScore, getGlobalScoreRecords, getUserScoreRecords, getUserScoreRecordsCount, getGlobalScoreRecordsCount} = require('./lib/score');
 
 const routeHelpers = require.main.require('./src/routes/helpers');
 
@@ -31,17 +31,55 @@ plugin.init = async (params) => {
 };
 
 plugin.addRoutes = async ({ router, middleware, helpers }) => {
-    const middlewares = [
-        middleware.ensureLoggedIn,			// use this if you want only registered users to call this route
-        // middleware.admin.checkPrivileges,	// use this to restrict the route to administrators
+    const loggedInmiddlewares = [
+				// use this if you want only registered users to call this route
+        middleware.ensureLoggedIn,
+        // middleware.admin.checkPrivileges,
+				// use this to restrict the route to administrators
     ];
-
-    routeHelpers.setupApiRoute(router, 'get', '/score-rules/:param1', middlewares, (req, res) => {
-        helpers.formatApiResponse(200, res, {
-            foobar: req.params.param1,
-        });
+    routeHelpers.setupApiRoute(router, 'get', '/scores/user', loggedInmiddlewares, async (req, res) => {
+			const currentPage = req.query.currentPage || 1;
+			const pageSize = req.query.pageSize || 10;
+			const start = (currentPage - 1) * pageSize;
+			const end = start + pageSize;
+			const total = await getUserScoreRecordsCount(req.uid);
+			const scores = await getUserScoreRecords(req.uid,start,end);
+			helpers.formatApiResponse(200, res, {
+					list: scores,
+					total: total,
+					currentPage: currentPage,
+					pageSize: pageSize,
+			});
     });
+    const adminMiddlewares = [
+  		middleware.admin.checkPrivileges,
+			// use this to restrict the route to administrators
+		];
+		routeHelpers.setupApiRoute(router, 'get', '/scores/admin', loggedInmiddlewares,async (req, res) => {
+			const currentPage = req.query.currentPage || 1;
+			const pageSize = req.query.pageSize || 10;
+			const start = (currentPage - 1) * pageSize;
+			const end = start + pageSize;
+			const total = await getGlobalScoreRecordsCount();
+			const scores = await getGlobalScoreRecords(start,end);
+			helpers.formatApiResponse(200, res, {
+				scores: scores,
+				total: total,
+				currentPage: currentPage,
+				pageSize: pageSize,
+			});
+		});
 };
+
+plugin.addNavigation = (data) => {
+	console.log(data);
+	// data.routes.push({
+	// 	route: '/score-rules',
+	// 	name: 'score-rules',
+	// 	icon: 'fa-tint',
+	// });
+	return data;
+}
 
 plugin.addAdminNavigation = (header) => {
     header.plugins.push({

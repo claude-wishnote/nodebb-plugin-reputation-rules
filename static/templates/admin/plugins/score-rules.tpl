@@ -60,19 +60,19 @@
 					</div>
 					<div class="float-end">
 						<div class="d-flex">
-							<select id="results-per-page" class="form-select form-select-sm w-auto">
+							<select id="page-size" class="form-select form-select-sm w-auto">
 								<option value="10">10-per-page</option>
 								<option value="20">20-per-page</option>
 								<option value="50">50-per-page</option>
 								<option value="100">100-per-page</option>
 							</select>
-							<button class="btn btn-light btn-sm dropdown-toggle" type="button">
+							<button id="pre-page" class="btn btn-light btn-sm dropdown-toggle" type="button">
 								<i class="fa fa-arrow-left"></i>
 							</button>
 							<button class="btn btn-light btn-sm dropdown-toggle border border-gray-900" type="button">
 								<span id="current-page" class="text-primary">1</span>							
 							</button>
-							<button class="btn btn-light btn-sm dropdown-toggle" type="button">
+							<button id="next-page" class="btn btn-light btn-sm dropdown-toggle" type="button">
 								<i class="fa fa-arrow-right"></i>
 							</button>
 						</div>

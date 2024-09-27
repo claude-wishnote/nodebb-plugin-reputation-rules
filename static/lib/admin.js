@@ -12,11 +12,88 @@
 */
 import { save, load } from 'settings';
 import * as uploader from 'uploader';
+app = window.app || {};
+import * as benchpress from 'benchpressjs';
 
 export function init() {
-	handleSettingsForm();
-	setupUploader();
+	// handleSettingsForm();
+	// setupUploader();
+	handlePrePage();
+	handleNextPage();
 };
+async function handlePrePage(){
+	console.log('pre-page');
+	// const records = await db.getSortedSetRevRange(userScoreKey(uid), start, stop);
+	// const pageSize = parseInt($('#page-size').val());
+	const pageSize = 1;
+	const currentPage = parseInt($('#current-page').html()) - 1;
+	$('#pre-page').on('click', () => {
+		loadSearchPage({
+			pageSize: pageSize,
+			currentPage: currentPage>=1?currentPage:1,
+  		});
+	});
+}
+async function handleNextPage(){
+	// const pageSize = parseInt($('#page-size').val());
+	const pageSize = 1;
+	const currentPage = parseInt($('#current-page').html()) + 1;
+	$('#next-page').on('click', () => {
+		loadSearchPage({
+			pageSize: pageSize,
+			currentPage: currentPage,
+  		});
+	});
+}
+function loadSearchPage(query) {
+	// const params = utils.params();
+	console.log(query);
+ 	// params.uid = query.uid;
+	// params.sortBy = query.sortBy;
+	const qs = decodeURIComponent($.param(query));
+	$.get(config.relative_path + '/api/v3/plugins/scores/admin?' + qs, function (data) {
+		console.log(data)
+		renderSearchResults(data);
+		// const url = config.relative_path + '/admin/manage/users?' + qs;
+		// if (history.pushState) {
+		// 	history.pushState({
+		// 		url: url,
+		// 	}, null, window.location.protocol + '//' + window.location.host + url);
+		// }
+	}).fail(function (xhrErr) {
+		if (xhrErr && xhrErr.responseJSON && xhrErr.responseJSON.error) {
+			alerts.error(xhrErr.responseJSON.error);
+		}
+	});
+}
+
+function renderSearchResults(data) {
+	benchpress.render('partials/paginator', { pagination: data.pagination }).then(function (html) {
+		$('.pagination-container').replaceWith(html);
+	});
+
+	app.parseAndTranslate('admin/plugins/score-rules', 'scores', data.response.scores||[], function (html) {
+		// $('.users-table tbody tr').remove();
+		// $('.users-table tbody').append(html);
+		// html.find('.timeago').timeago();
+		// $('.fa-spinner').addClass('hidden');
+		// if (!$('#user-search').val()) {
+		// 	$('#user-found-notify').addClass('hidden');
+		// 	$('#user-notfound-notify').addClass('hidden');
+		// 	return;
+		// }
+		// if (data && data.users.length === 0) {
+		// 	$('#user-notfound-notify').translateHtml('[[admin/manage/users:search.not-found]]')
+		// 		.removeClass('hidden');
+		// 	$('#user-found-notify').addClass('hidden');
+		// } else {
+		// 	$('#user-found-notify').translateHtml(
+		// 		translator.compile('admin/manage/users:alerts.x-users-found', data.matchCount, data.timing)
+		// 	).removeClass('hidden');
+		// 	$('#user-notfound-notify').addClass('hidden');
+		// }
+	});
+}
 
 function handleSettingsForm() {
 	load('score-rules', $('.score-rules-settings'), function () {

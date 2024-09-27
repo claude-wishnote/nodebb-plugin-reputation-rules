@@ -12,4 +12,5 @@ define('forum/score-rules', function () {
 	// 	$('#last-p').text('score-rules.js loaded!');
 	// };
 	// return module;
+
 });
