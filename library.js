@@ -47,7 +47,7 @@ plugin.addRoutes = async ({ router, middleware, helpers }) => {
 			const totalPage = Math.ceil(total / pageSize);
 			const scores = await getUserScoreRecords(req.uid,start,end);
 			helpers.formatApiResponse(200, res, {
-					list: scores,
+					scores: scores,
 					total: total,
 					currentPage: currentPage,
 					pageSize: pageSize,
