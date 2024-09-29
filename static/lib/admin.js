@@ -12,6 +12,8 @@
 */
 import { save, load } from 'settings';
 import * as uploader from 'uploader';
+import * as alerts from 'alerts';
+
 app = window.app || {};
 
 export function init() {
@@ -20,6 +22,7 @@ export function init() {
 	handlePrePage();
 	handleNextPage();
 	handleChangePageSize();
+	handleSettingsForm();
 };
 
 async function handleChangePageSize(){
@@ -83,40 +86,13 @@ function renderSearchResults(data) {
 
 function handleSettingsForm() {
 	load('score-rules', $('.score-rules-settings'), function () {
-		setupColorInputs();
+		console.log('loaded form');
 	});
-
 	$('#save').on('click', () => {
-		save('score-rules', $('.score-rules-settings')); // pass in a function in the 3rd parameter to override the default success/failure handler
-	});
-}
-
-function setupColorInputs() {
-	var colorInputs = $('[data-settings="colorpicker"]');
-	colorInputs.on('change', updateColors);
-	updateColors();
-}
-
-function updateColors() {
-	$('#preview').css({
-		color: $('#color').val(),
-		'background-color': $('#bgColor').val(),
-	});
-}
-
-function setupUploader() {
-	$('#content input[data-action="upload"]').each(function () {
-		var uploadBtn = $(this);
-		uploadBtn.on('click', function () {
-			uploader.show({
-				route: config.relative_path + '/api/admin/upload/file',
-				params: {
-					folder: 'score-rules',
-				},
-				accept: 'image/*',
-			}, function (image) {
-				$('#' + uploadBtn.attr('data-target')).val(image);
-			});
-		});
+		console.log('save clicked');
+		save('score-rules', $('.score-rules-settings'),
+		function (){
+			alerts.success('Settings Saved');
+		}); // pass in a function in the 3rd parameter to override the default success/failure handler
 	});
 }

@@ -14,7 +14,14 @@ const plugin = {};
 
 plugin.init = async (params) => {
     const { router /* , middleware , controllers */ } = params;
-     let topicPostScore = 5;
+    routeHelpers.setupPageRoute(router, '/score-rules', [(req, res, next) => {
+        winston.info(`[plugins/score-rules] In middleware. This argument can be either a single middleware or an array of middlewares`);
+        setImmediate(next);
+    }], controllers.renderScoreRulesPage);
+
+    routeHelpers.setupAdminPageRoute(router, '/admin/plugins/score-rules', controllers.renderAdminPage);
+
+		let topicPostScore = 5;
     await meta.settings.setOne('score-rules', 'topicPostScore', topicPostScore)
     //回复得分3
     let commentPostScore = 3;
@@ -22,12 +29,7 @@ plugin.init = async (params) => {
      //他人点赞得分1
     let upvotedScore = 1;
     await meta.settings.setOne('score-rules', 'upvotedScore', upvotedScore)
-    routeHelpers.setupPageRoute(router, '/score-rules', [(req, res, next) => {
-        winston.info(`[plugins/score-rules] In middleware. This argument can be either a single middleware or an array of middlewares`);
-        setImmediate(next);
-    }], controllers.renderScoreRulesPage);
 
-    routeHelpers.setupAdminPageRoute(router, '/admin/plugins/score-rules', controllers.renderAdminPage);
 };
 
 plugin.addRoutes = async ({ router, middleware, helpers }) => {
