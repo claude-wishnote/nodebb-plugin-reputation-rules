@@ -33,13 +33,35 @@ plugin.init = async (params) => {
 };
 
 plugin.addRoutes = async ({ router, middleware, helpers }) => {
+		const adminMiddlewares = [
+			middleware.admin.checkPrivileges,
+			// use this to restrict the route to administrators
+		];
     const loggedInmiddlewares = [
-				// use this if you want only registered users to call this route
-        middleware.ensureLoggedIn,
-        // middleware.admin.checkPrivileges,
-				// use this to restrict the route to administrators
-    ];
+			// use this if you want only registered users to call this route
+			middleware.ensureLoggedIn,
+			// middleware.admin.checkPrivileges,
+			// use this to restrict the route to administrators
+		];
+		routeHelpers.setupApiRoute(router, 'get', '/scores/admin', loggedInmiddlewares,async (req, res) => {
+			console.log('/scores/admin');
+			const currentPage = parseInt(req.query.currentPage|| 1) ;
+			const pageSize =parseInt(req.query.pageSize || 10);
+			const start = (currentPage - 1) * pageSize;
+			const end = start + pageSize - 1;
+			const total = await getGlobalScoreRecordsCount();
+			const totalPage = Math.ceil(total / pageSize);
+			const scores = await getGlobalScoreRecords(start,end);
+			helpers.formatApiResponse(200, res, {
+				scores: scores,
+				total: total,
+				currentPage: currentPage,
+				pageSize: pageSize,
+				totalPage: totalPage,
+			});
+		});
     routeHelpers.setupApiRoute(router, 'get', '/scores/user', loggedInmiddlewares, async (req, res) => {
+			console.log('/scores/user');
 			const currentPage = parseInt(req.query.currentPage|| 1) ;
 			const pageSize =parseInt(req.query.pageSize || 10);
 			//start从1开始
@@ -56,25 +78,15 @@ plugin.addRoutes = async ({ router, middleware, helpers }) => {
 					totalPage: totalPage,
 			});
     });
-    const adminMiddlewares = [
-  		middleware.admin.checkPrivileges,
-			// use this to restrict the route to administrators
-		];
-		routeHelpers.setupApiRoute(router, 'get', '/scores/admin', loggedInmiddlewares,async (req, res) => {
-			const currentPage = parseInt(req.query.currentPage|| 1) ;
-			const pageSize =parseInt(req.query.pageSize || 10);
-			const start = (currentPage - 1) * pageSize;
-			const end = start + pageSize - 1;
-			const total = await getGlobalScoreRecordsCount();
-			const totalPage = Math.ceil(total / pageSize);
-			const scores = await getGlobalScoreRecords(start,end);
-			helpers.formatApiResponse(200, res, {
-				scores: scores,
-				total: total,
-				currentPage: currentPage,
-				pageSize: pageSize,
-				totalPage: totalPage,
-			});
+		routeHelpers.setupApiRoute(router, 'post', '/scores/user/add', loggedInmiddlewares, async (req, res) => {
+			const { score, action } = req.body;
+			const response = await addScoreRecord(req.uid, score, action);
+			helpers.formatApiResponse(200, res, response);
+		});
+		routeHelpers.setupApiRoute(router, 'post', '/scores/user/deduct', loggedInmiddlewares, async (req, res) => {
+			const { score, action } = req.body;
+			const response = await deductScore(req.uid, score, action);
+			helpers.formatApiResponse(200, res, response);
 		});
 };
 
