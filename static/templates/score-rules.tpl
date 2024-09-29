@@ -2,7 +2,7 @@
 	<p>Your score is {totalScore}!</p>
 	<p id="last-p"></p>
 	<div class="table-responsive flex-grow-1">
-		<table class="table users-table text-sm">
+		<table class="table scores-table text-sm">
 			<thead>
 				<tr>
 					<th class="text-end text-muted">uid</th>
@@ -37,7 +37,7 @@
 				<i class="fa fa-arrow-left"></i>
 			</button>
 			<button class="btn btn-light btn-sm dropdown-toggle border border-gray-900" type="button">
-				<span id="current-page" class="text-primary">1</span>							
+				<span id="current-page" class="text-primary">{{currentPage}}</span>/<span id="total-page" class="text-primary">{{totalPage}}</span>								
 			</button>
 			<button class="btn btn-light btn-sm dropdown-toggle" type="button">
 				<i class="fa fa-arrow-right"></i>

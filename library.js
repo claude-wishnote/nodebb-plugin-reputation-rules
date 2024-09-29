@@ -38,17 +38,20 @@ plugin.addRoutes = async ({ router, middleware, helpers }) => {
 				// use this to restrict the route to administrators
     ];
     routeHelpers.setupApiRoute(router, 'get', '/scores/user', loggedInmiddlewares, async (req, res) => {
-			const currentPage = req.query.currentPage || 1;
-			const pageSize = req.query.pageSize || 10;
+			const currentPage = parseInt(req.query.currentPage|| 1) ;
+			const pageSize =parseInt(req.query.pageSize || 10);
+			//start从1开始
 			const start = (currentPage - 1) * pageSize;
-			const end = start + pageSize;
+			const end = start + pageSize - 1;
 			const total = await getUserScoreRecordsCount(req.uid);
+			const totalPage = Math.ceil(total / pageSize);
 			const scores = await getUserScoreRecords(req.uid,start,end);
 			helpers.formatApiResponse(200, res, {
 					list: scores,
 					total: total,
 					currentPage: currentPage,
 					pageSize: pageSize,
+					totalPage: totalPage,
 			});
     });
     const adminMiddlewares = [
@@ -56,17 +59,19 @@ plugin.addRoutes = async ({ router, middleware, helpers }) => {
 			// use this to restrict the route to administrators
 		];
 		routeHelpers.setupApiRoute(router, 'get', '/scores/admin', loggedInmiddlewares,async (req, res) => {
-			const currentPage = req.query.currentPage || 1;
-			const pageSize = req.query.pageSize || 10;
+			const currentPage = parseInt(req.query.currentPage|| 1) ;
+			const pageSize =parseInt(req.query.pageSize || 10);
 			const start = (currentPage - 1) * pageSize;
-			const end = start + pageSize;
+			const end = start + pageSize - 1;
 			const total = await getGlobalScoreRecordsCount();
+			const totalPage = Math.ceil(total / pageSize);
 			const scores = await getGlobalScoreRecords(start,end);
 			helpers.formatApiResponse(200, res, {
 				scores: scores,
 				total: total,
 				currentPage: currentPage,
 				pageSize: pageSize,
+				totalPage: totalPage,
 			});
 		});
 };
@@ -104,7 +109,7 @@ const actions = {
  * @param {Object} data - 操作数据
  */
 plugin.upvotePost = async (data) => {
-    console.log("用户:", data.uid, "点赞帖子:", data.pid);
+    console.log("user:", data.uid, "upvotePost:", data.pid);
     const { upvotedScore } = await meta.settings.get('score-rules');
     await addScoreRecord(data.uid, upvotedScore, actions.upvotePost, { pid: data.pid });
 };
@@ -114,7 +119,7 @@ plugin.upvotePost = async (data) => {
  * @param {Object} data - 操作数据
  */
 plugin.unvodePost = async (data) => {
-    console.log("用户:", data.uid, "取消点赞帖子:", data.pid);
+    console.log("user:", data.uid, "unvodePost:", data.pid);
     const { upvotedScore } = await meta.settings.get('score-rules');
     await deductScore(data.uid, upvotedScore, actions.unvotePost, { pid: data.pid });
 };
@@ -125,7 +130,7 @@ plugin.unvodePost = async (data) => {
  * @returns {Object} 更新后的数据
  */
 plugin.createPost = async (data) => {
-    console.log("用户:", data.data.uid, "创建帖子:", data.data.pid);
+    console.log("user:", data.data.uid, "createPost:", data.data.pid);
     const { topicPostScore, commentPostScore } = await meta.settings.get('score-rules');
     if(data.data.isMain) {
         // 创建主题帖

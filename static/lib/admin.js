@@ -22,12 +22,14 @@ export function init() {
 	handleNextPage();
 };
 async function handlePrePage(){
-	console.log('pre-page');
 	// const records = await db.getSortedSetRevRange(userScoreKey(uid), start, stop);
 	// const pageSize = parseInt($('#page-size').val());
-	const pageSize = 1;
-	const currentPage = parseInt($('#current-page').html()) - 1;
 	$('#pre-page').on('click', () => {
+		const pageSize = parseInt($('#page-size').val());
+		const currentPage = parseInt($('#current-page').html()) - 1;
+		if(currentPage < 1){
+			return;
+		}
 		loadSearchPage({
 			pageSize: pageSize,
 			currentPage: currentPage>=1?currentPage:1,
@@ -36,9 +38,13 @@ async function handlePrePage(){
 }
 async function handleNextPage(){
 	// const pageSize = parseInt($('#page-size').val());
-	const pageSize = 1;
-	const currentPage = parseInt($('#current-page').html()) + 1;
 	$('#next-page').on('click', () => {
+		const pageSize = parseInt($('#page-size').val());
+		const currentPage = parseInt($('#current-page').html()) + 1;
+		const totalPages = parseInt($('#total-page').html());
+		if(currentPage > totalPages){
+			return;
+		}
 		loadSearchPage({
 			pageSize: pageSize,
 			currentPage: currentPage,
@@ -47,12 +53,10 @@ async function handleNextPage(){
 }
 function loadSearchPage(query) {
 	// const params = utils.params();
-	console.log(query);
  	// params.uid = query.uid;
 	// params.sortBy = query.sortBy;
 	const qs = decodeURIComponent($.param(query));
 	$.get(config.relative_path + '/api/v3/plugins/scores/admin?' + qs, function (data) {
-		console.log(data)
 		renderSearchResults(data);
 		// const url = config.relative_path + '/admin/manage/users?' + qs;
 		// if (history.pushState) {
@@ -68,15 +72,18 @@ function loadSearchPage(query) {
 }
 
 function renderSearchResults(data) {
-	benchpress.render('partials/paginator', { pagination: data.pagination }).then(function (html) {
-		$('.pagination-container').replaceWith(html);
-	});
-
-	app.parseAndTranslate('admin/plugins/score-rules', 'scores', data.response.scores||[], function (html) {
+	// benchpress.render('partials/paginator', { pagination: data.pagination }).then(function (html) {
+	// 	$('.pagination-container').replaceWith(html);
+	// });
+	$('.fa-spinner').removeClass('hidden');
+	app.parseAndTranslate('admin/plugins/score-rules', 'scores', data.response, function (html) {
+		$('.scores-table tbody tr').remove();
+		$('.scores-table tbody').append(html);
+		$('#current-page').html(data.response.currentPage);
 		// $('.users-table tbody tr').remove();
 		// $('.users-table tbody').append(html);
 		// html.find('.timeago').timeago();
-		// $('.fa-spinner').addClass('hidden');
+		$('.fa-spinner').addClass('hidden');
 		// if (!$('#user-search').val()) {
 		// 	$('#user-found-notify').addClass('hidden');
 		// 	$('#user-notfound-notify').addClass('hidden');
