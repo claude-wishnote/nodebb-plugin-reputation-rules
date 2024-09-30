@@ -28,7 +28,7 @@
 						<input type="number" id="upvotedScore" name="upvotedScore"  title="upvotedScore" class="form-control" placeholder="[[score-rules:upvoted-score]]">
 					</div>
 				</div>
-				<button id="save" class="btn btn-primary" type="submit">[[score-rules:save]]</button>
+				<button id="save" class="btn btn-primary" type="submit">[[global:save]]</button>
 			</form>
 			<div class="mt-4 mb-4">
 				<h5 class="fw-bold tracking-tight settings-header">	
