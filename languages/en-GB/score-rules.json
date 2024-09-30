@@ -1,0 +1,21 @@
+{
+    "your-score-is": "Your score is %1!",
+    "score-settings": "Score Settings",
+    "topic-post-score": "Topic Post Score",
+    "comment-post-score": "Comment Post Score",
+    "upvoted-score": "Upvoted Score",
+    "save": "Save",
+    "all-users-score-history-list": "All Users Score History List",
+    "uid": "UID",
+    "username": "Username",
+    "email": "Email",
+    "create-time": "Create Time",
+    "action": "Action",
+    "score": "Score",
+    "data": "Data",
+    "per-page": "%1 per page",
+    "current-page": "Current Page",
+    "total-page": "Total Pages",
+    "previous-page": "Previous Page",
+    "next-page": "Next Page"
+}

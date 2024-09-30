@@ -1,6 +1,6 @@
 {
   "name": "nodebb-plugin-score-rules",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "a custom score rules plugin",
   "main": "library.js",
   "repository": {

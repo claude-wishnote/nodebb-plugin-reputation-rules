@@ -1,0 +1,21 @@
+{
+    "your-score-is": "您的积分是 %1！",
+    "score-settings": "积分设置",
+    "topic-post-score": "主题帖积分",
+    "comment-post-score": "评论帖积分",
+    "upvoted-score": "被点赞积分",
+    "save": "保存",
+    "all-users-score-history-list": "所有用户积分历史列表",
+    "uid": "用户ID",
+    "username": "用户名",
+    "email": "邮箱",
+    "create-time": "创建时间",
+    "action": "操作",
+    "score": "积分",
+    "data": "数据",
+    "per-page": "每页 %1 条",
+    "current-page": "当前页",
+    "total-page": "总页数",
+    "previous-page": "上一页",
+    "next-page": "下一页"
+}

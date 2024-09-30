@@ -27,5 +27,7 @@
 		"../client/score-rules.js": "./static/lib/score-rules.js",
 		"../admin/plugins/score-rules.js": "./static/lib/admin.js"
 	},
-	"templates": "static/templates"
+	"templates": "static/templates",
+	"languages": "languages",
+	"defaultLang": "en-GB"
 }

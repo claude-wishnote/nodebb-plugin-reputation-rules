@@ -1,0 +1,18 @@
+{
+    "your-score-is": "당신의 점수는 %1점입니다!",
+    "create-time": "생성 시간",
+    "action": "행동",
+    "score": "점수",
+    "data": "데이터",
+    "per-page": "페이지당 %1개",
+    "current-page": "현재 페이지",
+    "total-page": "전체 페이지",
+    "score-settings": "점수 설정",
+    "topic-post-score": "주제 게시 점수",
+    "comment-post-score": "댓글 게시 점수",
+    "upvoted-score": "추천 받은 점수",
+    "all-users-score-history-list": "모든 사용자 점수 기록 목록",
+    "uid": "사용자 ID",
+    "username": "사용자 이름",
+    "email": "이메일"
+}
