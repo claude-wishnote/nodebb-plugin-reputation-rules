@@ -1,14 +1,18 @@
 'use strict';
 
-const nconf = require.main.require('nconf');
 const winston = require.main.require('winston');
-
 const meta = require.main.require('./src/meta');
-
+const utils = require.main.require('./src/utils');
 const controllers = require('./lib/controllers');
-const { addScoreRecord, deductScore, getGlobalScoreRecords, getUserScoreRecords, getUserScoreRecordsCount, getGlobalScoreRecordsCount} = require('./lib/score');
-
+const rewards = require.main.require('./src/rewards');
+const { addScoreRecord,
+	deductScore,
+	getGlobalScoreRecords,
+	getUserScoreRecords,
+	getUserScoreRecordsCount,
+	getGlobalScoreRecordsCount} = require('./lib/score');
 const routeHelpers = require.main.require('./src/routes/helpers');
+const User = require.main.require('./src/user');
 
 const plugin = {};
 
@@ -44,7 +48,6 @@ plugin.addRoutes = async ({ router, middleware, helpers }) => {
 			// use this to restrict the route to administrators
 		];
 		routeHelpers.setupApiRoute(router, 'get', '/scores/admin', loggedInmiddlewares,async (req, res) => {
-			console.log('/scores/admin');
 			const currentPage = parseInt(req.query.currentPage|| 1) ;
 			const pageSize =parseInt(req.query.pageSize || 10);
 			const start = (currentPage - 1) * pageSize;
@@ -61,7 +64,6 @@ plugin.addRoutes = async ({ router, middleware, helpers }) => {
 			});
 		});
     routeHelpers.setupApiRoute(router, 'get', '/scores/user', loggedInmiddlewares, async (req, res) => {
-			console.log('/scores/user');
 			const currentPage = parseInt(req.query.currentPage|| 1) ;
 			const pageSize =parseInt(req.query.pageSize || 10);
 			//start从1开始
@@ -91,7 +93,6 @@ plugin.addRoutes = async ({ router, middleware, helpers }) => {
 };
 
 plugin.addNavigation = (data) => {
-	console.log(data);
 	// data.routes.push({
 	// 	route: '/score-rules',
 	// 	name: 'score-rules',
@@ -116,6 +117,7 @@ const actions = {
 	createCommentPost: 'create comment post',  // 创建评论帖
 	upvotePost: 'upvote post',  // 点赞帖子
 	unvotePost: 'unvote post',  // 取消点赞
+	login: 'login',
 };
 
 /**
@@ -123,7 +125,7 @@ const actions = {
  * @param {Object} data - 操作数据
  */
 plugin.upvotePost = async (data) => {
-    console.log("user:", data.uid, "upvotePost:", data.pid);
+	  winston.info("user:", data.uid, "upvotePost:", data.pid);
     const { upvotedScore } = await meta.settings.get('score-rules');
     await addScoreRecord(data.uid, upvotedScore, actions.upvotePost, { pid: data.pid });
 };
@@ -133,7 +135,7 @@ plugin.upvotePost = async (data) => {
  * @param {Object} data - 操作数据
  */
 plugin.unvodePost = async (data) => {
-    console.log("user:", data.uid, "unvodePost:", data.pid);
+	  winston.info("user:", data.uid, "unvodePost:", data.pid);
     const { upvotedScore } = await meta.settings.get('score-rules');
     await deductScore(data.uid, upvotedScore, actions.unvotePost, { pid: data.pid });
 };
@@ -144,7 +146,7 @@ plugin.unvodePost = async (data) => {
  * @returns {Object} 更新后的数据
  */
 plugin.createPost = async (data) => {
-    console.log("user:", data.data.uid, "createPost:", data.data.pid);
+	  winston.info("user:", data.data.uid, "createPost:", data.data.pid);
     const { topicPostScore, commentPostScore } = await meta.settings.get('score-rules');
     if(data.data.isMain) {
         // 创建主题帖
@@ -163,6 +165,58 @@ plugin.createPost = async (data) => {
     }
     return data;
 };
+
+
+plugin.addRewardConditions =  (conditionsData) =>{
+	conditionsData.push({
+			name: 'Login Count',
+			condition: 'custom/user.loginCount',
+	});
+ 	return conditionsData;
+};
+
+plugin.onUserLogin = async (data) => {
+	User.incrementUserFieldBy(data.uid, 'loginCount', 1, (err) => {
+			if (err) {
+				winston.error(`[plugins/custom-rewards] Error incrementing login count: ${err.message}`);
+			} else {
+				winston.info(`[custom-rewards] Incremented login count for user ${data.uid}`);
+			}
+	});
+
+	await rewards.checkConditionAndRewardUser({
+			uid: data.uid,
+			condition: 'custom/user.loginCount',
+			//返回loginCount的函数
+			method: async () => {
+				const loginCount = await User.getUserField(data.uid, 'loginCount');
+				return loginCount;
+			},
+	});
+// const websockets = require.main.require('./src/socket.io');
+// websockets.in(`uid_${data.uid}`).emit('event:alert', { message: 'logined users can received!', title: 'socket alert message' });
+	return data;
+};
+
+plugin.addReward =  (rewardData) => {
+	rewardData.push({
+    rid: 'custom/award-score',
+    name: 'Award Score',
+		inputs: [
+			{
+				type: 'text',
+				name: 'score',
+				label: 'Amount of score:'
+			}
+		]
+	})
+	return rewardData;
+}
+
+plugin.giveScoreRewards = async (data) => {
+	const action = `reward:[${data.rewardData.condition}] ${data.rewardData.conditional} ${data.rewardData.value}`
+	await addScoreRecord(data.uid, data.reward.score, action, { 'loginDate': utils.toISOString(Date.now()) });
+}
 
 module.exports = plugin;
 

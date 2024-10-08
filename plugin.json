@@ -9,7 +9,11 @@
 		{ "hook": "action:post.upvote", "method": "upvotePost" },
 		{ "hook": "action:post.unvote", "method":"unvodePost" },
 		{ "hook": "filter:post.create", "method": "createPost" },
-		{ "hook": "filter:navigation.available", "method": "addNavigation" }
+		{ "hook": "filter:navigation.available", "method": "addNavigation" },
+		{ "hook": "filter:rewards.conditions", "method": "addRewardConditions" },
+		{ "hook": "filter:rewards.rewards", "method": "addReward" },
+		{ "hook": "action:rewards.award:custom/award-score", "method": "giveScoreRewards" },
+        { "hook": "action:user.loggedIn", "method": "onUserLogin" }
  	],
 	"staticDirs": {
 		"static": "./static"
